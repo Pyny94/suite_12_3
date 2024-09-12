@@ -30,15 +30,15 @@ class Tournament:
     def start(self):
         finishers = {}
         place = 1
-        while self.participants:
-            for participant in self.participants:
-                participant.run()
-                if participant.distance >= self.full_distance:
-                    finishers[place] = participant
-                    place += 1
-                    self.participants.remove(participant)
+        while self.participants:  # по списку участников (объектов класса Runner)
+            for participant in self.participants:  # для каждого участника в списке:
+                participant.run()  # вызываем функцию бежать
+                if participant.distance >= self.full_distance:  #
+                    finishers[place] = participant  # в словарь finishers помещают результат забега (место:участник)
+                    place += 1  # определяем финишера на следующее место,
+                    self.participants.remove(participant)  # убираем финишировавшего из списка участников
+        return finishers  # возвращает словарь с результатами забега
 
-        return finishers
 
 
 
@@ -56,28 +56,40 @@ class TournamentTest(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        for result in cls.all_results.items():
-            print(result)
+        print(cls.all_results)
+        for result in cls.all_results.values():
+            show_result = {}
+            for place, runner in result.items():
+                show_result[place] = runner.name
+            print(show_result)
 
     @unittest.skipIf(is_frozen == True, "Тесты в этом кейсе заморожены")
     def test_usain_and_nick(self):
-        tournament = Tournament(90, [self.usain, self.nick])
-        self.all_results.update(tournament.start())
-        self.assertTrue(self.all_results[max(self.all_results.keys())] == self.nick.name)
+        self.tournament_1 = Tournament(90, self.usain, self.nick)
+        self.all_results = self.tournament_1.start()
+        last_runner_name = self.all_results[max(self.all_results.keys())].name
+        self.assertTrue(last_runner_name == 'Ник')
+        TournamentTest.all_results[1] = self.all_results
 
     @unittest.skipIf(is_frozen == True, "Тесты в этом кейсе заморожены")
     def test_andrey_and_nick(self):
-        tournament = Tournament(90, [self.andrey, self.nick])
-        self.all_results.update(tournament.start())
-        self.assertTrue(self.all_results[max(self.all_results.keys())] == self.nick.name)
+        self.tournament_2 = Tournament(90, self.andrey, self.nick)
+        self.all_results = self.tournament_2.start()
+        last_runner_name = self.all_results[max(self.all_results.keys())].name
+        self.assertTrue(last_runner_name == 'Ник')
+        TournamentTest.all_results[2] = self.all_results
 
     @unittest.skipIf(is_frozen == True, "Тесты в этом кейсе заморожены")
     def test_usain_andrey_and_nick(self):
-        tournament = Tournament(90, [self.usain, self.andrey, self.nick])
-        self.all_results.update(tournament.start())
-        self.assertTrue(self.all_results[max(self.all_results.keys())] == self.nick.name)
-
-
+        self.tournament_3 = Tournament(90, self.usain, self.andrey, self.nick)
+        self.all_results = self.tournament_3.start()
+        last_runner_name = self.all_results[max(self.all_results.keys())].name
+        self.assertTrue(last_runner_name == 'Ник')
+        TournamentTest.all_results[3] = self.all_results
 
 if __name__ == '__main__':
     unittest.main()
+
+
+
+
